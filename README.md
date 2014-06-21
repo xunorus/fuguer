@@ -7,7 +7,7 @@ Run it in chuck (http://chuck.cs.princeton.edu/), actually tested on version:	1.
 Run chuck from command line adding ':' and the fugue's name based on the day it represents.
 For example, if you want to run the fugue for the day one you should run the command like this:
 
-    chuck fuguer:1
+    chuck fuguer.ck:1
 
 
 
