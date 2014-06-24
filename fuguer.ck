@@ -1,6 +1,5 @@
 <<<"One_Fugue_for_each_day_of_the_next_25920_Years">>>; //prints title
-// la musica es un lenguaje universal, las matematicas son la lengua universal
-
+//listen to 7225260 FUGUE
 //Sound chain
 Pan2 xunomaster =>  dac;
 
@@ -44,7 +43,8 @@ now => time t1;
 0=> int counter;  
 
 //timing parammeter 
-0.35 => float beattime;
+0.43 => float beattime;
+// 0.35 => float beattime;
 
 //global arrays
 [49, 50, 52, 54, 56, 57, 59, 61,0] @=> int notes[];
@@ -84,14 +84,15 @@ fun string int_array_asString(int a[]){
 
 ////////////////////////////////////////////////////
 // COMPOSITOR's ID
+//this should no be used aalways...
 //rewrite last notes of melo_1 array (for pseudocompositional reasons)
 //this short succesion will be reapeated at the end of each subject
-61 => melo_1[x-1]; //store this value into position x -1 of the arrray
-59 => melo_1[x-2];
-57 => melo_1[x-3];
-52 => melo_1[x-4];
-50 => melo_1[x-5];
-49 => melo_1[x-6];
+// 61 => melo_1[x-1]; //store this value into position x -1 of the arrray
+// 59 => melo_1[x-2];
+// 57 => melo_1[x-3];
+// 52 => melo_1[x-4];
+// 50 => melo_1[x-5];
+// 49 => melo_1[x-6];
 
 <<<"melo_1", int_array_asString(melo_1) >>>;//print again  to see the changes
 ////////////////////////////////////////////////////
@@ -147,7 +148,12 @@ spork~ Fb.play(melo_2, 7, 0);
 spork~ Fc.play (melo_1, 7, 1); 
 beattime::second*x=>now;
 
-//THIRD VOICE     
+//SECOND VOICE, solo
+0.6 => oscA.gain;
+spork~Fa.play(melo_2, 0, 0); 
+beattime::second*x =>now;
+    
+//THIRD VOICE, three voices  
 0.5/2 => oscA.gain=>oscB.gain;
 0.4 => oscC.gain;
 spork~ Fd.play(melo_3, 2,0 ) ;
@@ -155,7 +161,13 @@ spork~ Fe.play (melo_2, 14,1);
 spork~ Ff.play (melo_1, 14,2);
 beattime::second*x=>now;
 
-//FOUTH VOICE    
+//THIRD VOICE, solo
+0.6 => oscA.gain;
+spork~Fa.play(melo_3, 0, 0); 
+beattime::second*x =>now;
+    
+
+//FOURTH VOICE, four voices    
 0.4/3 => oscA.gain=>oscB.gain=>oscC.gain;
 0.5 => oscD.gain;
 spork~ Fg.play (melo_4, -3,0 ) ;
@@ -164,16 +176,60 @@ spork~ Fi.play (melo_2, 21,2);
 spork~ Fj.play (melo_1, -15,3);
 beattime::second*x=>now;
 
-//CODA A /21notes
-0.8/4 => oscA.gain=>oscB.gain=>oscC.gain=>oscD.gain;
-spork~ Fg.play (melo_1, 4,0 ) ;
-spork~ Fh.play (melo_1, 16,1);
-spork~ Fi.play (melo_1, 21,2);
-// spork~ Fi.play (melo_1, 28,2);
-spork~ Fj.play (melo_1, -8,3);
-beattime::second*x=>now;
+// //FIRST VOICE again
+// 0.6 => oscA.gain;
+// spork~Fa.play(melo_4, 0, 0); 
+// beattime::second*x =>now;
+    
+// //Reexposition 1 rotating all the four voices VOICE    
+// 0.4/3 => oscA.gain=>oscB.gain=>oscC.gain;
+// 0.5 => oscD.gain;
+// spork~ Fg.play (melo_3, -3,0 ) ;
+// spork~ Fh.play (melo_4, 9,1);
+// spork~ Fi.play (melo_1, 21,2);
+// spork~ Fj.play (melo_2, -15,3);
+// beattime::second*x=>now;
+
+// // //FIRST VOICE again
+// // 0.6 => oscA.gain;
+// // spork~Fa.play(melo_3, 0, 0); 
+// // beattime::second*x =>now;
+
+// // //Reexposition 2 rotating all the four voices VOICE    
+// // 0.4/3 => oscA.gain=>oscB.gain=>oscC.gain;
+// // 0.5 => oscD.gain;
+// // spork~ Fg.play (melo_2, -3,0 ) ;
+// // spork~ Fh.play (melo_3, 9,1);
+// // spork~ Fi.play (melo_4, 21,2);
+// // spork~ Fj.play (melo_1, -15,3);
+// // beattime::second*x=>now;
 
 
+// // //FIRST VOICE again
+// // 0.6 => oscA.gain;
+// // spork~Fa.play(melo_1, 0, 0); 
+// // beattime::second*x =>now;
+
+
+// //Reexposition 3 rotating all the four voices VOICE    
+// 0.4/3 => oscA.gain=>oscB.gain=>oscC.gain;
+// 0.5 => oscD.gain;
+// spork~ Fg.play (melo_1, -3,0 ) ;
+// spork~ Fh.play (melo_2, 9,1);
+// spork~ Fi.play (melo_3, 21,2);
+// spork~ Fj.play (melo_4, -15,3);
+// beattime::second*x=>now;
+
+
+// //CODA A /21notes
+// 0.8/4 => oscA.gain=>oscB.gain=>oscC.gain=>oscD.gain;
+// spork~ Fg.play (melo_1, 4,0 ) ;
+// spork~ Fh.play (melo_1, 16,1);
+// spork~ Fi.play (melo_1, 21,2);
+// spork~ Fj.play (melo_1, -8,3);
+// beattime::second*x=>now;
+
+1::second =>now;
 // Turn down all volume
 0=> oscA.gain=>oscB.gain=>oscC.gain=>oscD.gain;
 
@@ -187,5 +243,3 @@ break;
 
 
  }
-
- 
