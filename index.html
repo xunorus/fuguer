@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative 8-Bit Lofi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script type="module" defer>
+        import { Chuck } from 'https://cdn.jsdelivr.net/npm/webchuck/+esm';
+
+        let theChuck; // global variable
+        let isPlaying = false;
+
+        document.getElementById('playPause').addEventListener('click', async () => {
+            // Initialize default ChucK object
+            if (theChuck === undefined) {
+                theChuck = await Chuck.init([]);
+            }
+
+            if (!isPlaying) {
+                isPlaying = true;
+                theChuck.runCode(`
+/// this contrapunctual form is almost imposible to be perfomed by human performers without written access to it.
+//el tema se repite literalmente en forma de canon mientras una de  las voces 'improvisa', siempre
+//dentro de la estructura temporal aleatoriamente determinada.
+////////////////////////////////////////
+//SEED
+//////
+// si la semilla es declarada
+if (me.args()==1) 
+{
+    Std.atoi(me.arg(0))=> int seed;
+    Math.srandom(seed);
+    <<<me.arg(0)>>>;
+
+    seed/365=> int year;
+    seed%365 =>int days;
+    <<<"Year", year,"Day number:",days>>>;
+    <<<"Name", seed>>>;
+
+}
+//sino establece una semilla dentro del el rango especificado
+else 
+{
+    Math.random2(0, 9460800 )=> int seed;//25920.365=9460800
+    Math.srandom(seed);
+
+    seed/365=> int year;
+    seed%365 =>int days;
+    <<<"Year", year,"Day number:",days>>>;
+    <<<"Name canon", seed>>>;
+<<<"run 'chuck PATH_TO_FILE/NAME_OF_FILE:",seed, "to play this again">>>;
+
+}
+////////////////////////////////////////
+
+//pedal
+//sound chain 
+SinOsc a =>dac.left;
+SinOsc b =>dac.right; 
+
+0.5/2 => a.gain=> b.gain;//adjust gain proportionally 
+ 
+// (the Bb Aeolian mode)
+[ 46, 48, 49, 51, 53, 54, 56, 58,46 ] @=> int notes[];
+
+[.5,.625,.4,.625,.45,.7,.4,.8, .625]  @=> float durations[];
+
+
+//DUO BASE 3 VUELTAS duo base
+for (0=> int looper; looper <3 ; looper++)//repite 3x veces
+{ 
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[i]+12) =>a.freq;//  if  is odd then use  left channel
+        else Std.mtof(notes[i]+12) =>b.freq;// // if even use right...
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions  
+    }
+}
+
+//a IMPROVISA 3 vueltas
+ for (0=> int looper; looper <3 ; looper++)//repite  Improvisando lado derecho
+{ 
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[Math.random2( 0, 7 )]+19) =>a.freq;// if  is odd then use left channel 
+        else Std.mtof(notes[i]+12) =>b.freq; // if even use right channel 
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions  
+    }
+}
+
+
+//DUO BASE 2 VUELTAS duo base
+for (0=> int looper; looper <2 ; looper++)//repite 
+{ 
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[i]+12) =>a.freq;//  if  is odd then use  left channel
+        else Std.mtof(notes[i]+12) =>b.freq;// // if even
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions  
+    }
+}
+
+
+//b IMPROVISA 3 vueltas
+ for (0=> int looper; looper <3 ; looper++)//repite  Improvisando lado derecho
+{ 
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[i]+15) =>a.freq;//  if  is odd then use  left channel
+        else Std.mtof(notes[Math.random2( 0, 7 )]+12) =>b.freq; // if even use right channel 
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions  
+    }
+}
+    
+  
+//DUO BASE 1 VUELTAS duo base
+for (0=> int looper; looper <1 ; looper++)//repite 
+{ 
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[i]+12) =>a.freq;//  if  is odd then use  left channel
+        else Std.mtof(notes[i]+12) =>b.freq;// // if even use right...
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions  
+    }
+}
+
+//FADE OUT
+18=> int fadOut;//init variable
+for (0=> int looper; looper <2 ; looper++)//repite 
+{                       
+    for (0=> int i ; i < notes.cap(); i++)
+    {
+        if (i % 2) Std.mtof(notes[i]+12) =>a.freq;// MIDI to freq    
+        else  Std.mtof(notes[i]+12) =>b.freq;// MIDI to freq
+        durations[Math.random2( 0, 7 )]::second => now; //random durtions            
+        fadOut--;
+        fadOut/34.0=> float fl_fadOut;
+        fl_fadOut/2 => a.gain=> b.gain;//adjust gain proportionally 
+    }                       
+}
+
+
+        `);
+                loop(); // Start animations
+            } else {
+                isPlaying = false;
+                noLoop(); // Stop animations
+                theChuck.stop(); // Stop Chuck playback
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Great year art of fugue</h1>
+        <div id="canvas-container"></div>
+        <div id="player">
+            <button id="playPause">▶</button>
+        </div>
+        <footer>
+            <p>Created with ❤️ and p5.js</p>
+        </footer>
+    </div>
+
+    <!-- <audio id="audio" src="lofi.mp3"></audio> -->
+    <script>
+        let waveOffset = 0; // Offset for moving waves
+        let starPositions = []; // Array for star positions
+
+        function setup() {
+            let canvas = createCanvas(600, 400);
+            canvas.parent("canvas-container");
+
+            // Create stars
+            for (let i = 0; i < 100; i++) {
+                starPositions.push({ x: random(width), y: random(height * 0.6) });
+            }
+        }
+
+        function draw() {
+            // Night sky
+            background(0, 13, 37);
+
+            // Stars twinkling
+            for (let star of starPositions) {
+                fill(255);
+                ellipse(star.x, star.y, random(2, 4), random(2, 4));
+            }
+
+            // Moving waves
+            noStroke();
+            // for (let y = height * 0.6; y < height; y += 10) {
+            for (let y = height * .8; y < height; y += 10) {
+                // fill(0, random(30, 60), random(30, 20));
+                fill(0, random(30, 60), random(100, 150));
+                beginShape();
+                // for (let x = 0; x <= width; x += 20) {
+                for (let x = 0; x <= width; x += 20) {
+                    let waveHeight = sin((x + waveOffset) * 5) ;
+                    // let waveHeight = sin((x + waveOffset) * 0.05) * 0;
+                    vertex(x, y + waveHeight);
+                }
+                vertex(width, height);
+                vertex(0, height);
+                endShape(CLOSE);
+            }
+
+            waveOffset += 11; // Increment offset for wave animation
+        }
+    </script>
+</body>
+
+</html>
